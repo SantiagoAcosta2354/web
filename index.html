@@ -1,0 +1,717 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex Interactiva | Explora el mundo Pokémon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-red: #ff0000;
+            --primary-yellow: #ffcc00;
+            --secondary-blue: #3b4cca;
+            --light-bg: #f5f5f5;
+            --dark-text: #333;
+            --light-text: #fff;
+        }
+        
+        /* Estilos generales */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            transition: background-color 0.3s;
+        }
+        
+        /* Header animado */
+        header {
+            background: linear-gradient(135deg, var(--primary-red), #cc0000);
+            color: var(--light-text);
+            text-align: center;
+            padding: 30px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            animation: pulse 8s infinite linear;
+        }
+        
+        @keyframes pulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            position: relative;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+            animation: bounce 1.5s infinite alternate;
+        }
+        
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+        
+        .logo span {
+            color: var(--primary-yellow);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        /* Navegación */
+        nav {
+            background-color: var(--secondary-blue);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background-color: var(--primary-yellow);
+            color: var(--dark-text);
+        }
+        
+        /* Contenido principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Sección de bienvenida */
+        .welcome-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .welcome-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .welcome-section h2 {
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+        }
+        
+        .welcome-section p {
+            margin-bottom: 20px;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+        
+        /* Contador de Pokémon */
+        .pokemon-counter {
+            background-color: var(--secondary-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 300px;
+            font-size: 1.2rem;
+        }
+        
+        .counter-number {
+            font-weight: bold;
+            color: var(--primary-yellow);
+            font-size: 1.5rem;
+        }
+        
+        /* Características */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-yellow);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        
+        .feature h3 {
+            color: var(--secondary-blue);
+            margin-bottom: 15px;
+        }
+        
+        .feature p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Demo de búsqueda */
+        .search-demo {
+            margin: 50px 0;
+            text-align: center;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        #search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        #search-input:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            background-color: #cc0000;
+        }
+        
+        .search-results {
+            display: none;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Tipo de Pokémon */
+        .type-tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        
+        .type-tag {
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .type-tag:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #222, #444);
+            color: var(--light-text);
+            text-align: center;
+            padding: 40px 0 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 30px;
+            padding: 0 20px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            color: var(--primary-yellow);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-section h3::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background-color: var(--primary-red);
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--primary-yellow);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #555;
+        }
+        
+        /* Botones */
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-yellow);
+            color: var(--dark-text);
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        
+        .cta-button:hover {
+            background-color: var(--primary-red);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        
+        .cta-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+        
+        /* Efectos de Pokémon */
+        .pokeball {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            background-image: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png');
+            background-size: contain;
+            z-index: -1;
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50vw, 25vh) rotate(90deg); }
+            50% { transform: translate(100vw, 50vh) rotate(180deg); }
+            75% { transform: translate(50vw, 75vh) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        /* Dark mode toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        
+        body.dark-mode {
+            background-color: #222;
+            color: #eee;
+        }
+        
+        body.dark-mode .welcome-section,
+        body.dark-mode .feature,
+        body.dark-mode .search-results {
+            background-color: #333;
+            color: #eee;
+        }
+        
+        body.dark-mode .feature p {
+            color: #ccc;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .nav-links {
+                margin-top: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .welcome-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pokeballs flotantes -->
+    <div class="pokeball" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+    <div class="pokeball" style="top: 70%; left: 80%; animation-delay: -5s;"></div>
+    <div class="pokeball" style="top: 40%; left: 60%; animation-delay: -10s;"></div>
+    
+    <header>
+        <div class="logo">Poké<span>Dex</span></div>
+        <p class="tagline">¡Atrapa toda la información de tus Pokémon favoritos!</p>
+    </header>
+    
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-paw"></i> Pokédex
+            </div>
+            <div class="nav-links">
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="explorar.html"><i class="fas fa-search"></i> Explorar</a>
+                <a href="pokedex.html"><i class="fas fa-book"></i> Pokédex</a>
+                <a href="#"><i class="fas fa-gamepad"></i> Juegos</a>
+                <a href="#"><i class="fas fa-info-circle"></i> Acerca de</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <section class="welcome-section">
+            <h2>¡Bienvenido Entrenador Pokémon!</h2>
+            <p>Explora el maravilloso mundo de los Pokémon con nuestra Pokédex interactiva. Encuentra información detallada sobre tus Pokémon favoritos, sus estadísticas, habilidades, evoluciones y mucho más.</p>
+            <p>Nuestra plataforma utiliza la <strong>PokéAPI</strong> para ofrecerte datos actualizados y precisos sobre todas las generaciones de Pokémon, desde Kanto hasta Paldea.</p>
+            
+            <div class="pokemon-counter">
+                Actualmente tenemos registrados <span class="counter-number" id="pokemon-count">???</span> Pokémon
+            </div>
+            
+            <a href="explorar.html" class="cta-button" id="explore-btn">
+                <i class="fas fa-binoculars"></i> Explorar Pokémon
+            </a>
+            <a href="pokedex.html" class="cta-button">
+                <i class="fas fa-cube"></i> Ver en 3D
+            </a>
+        </section>
+        
+        <!-- Demo de búsqueda -->
+        <div class="search-demo">
+            <h2>Prueba nuestro buscador</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Escribe el nombre de un Pokémon...">
+                <button class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="search-results" id="search-results">
+                <!-- Los resultados aparecerán aquí -->
+            </div>
+        </div>
+        
+        <!-- Tipos de Pokémon -->
+        <div class="type-tags">
+            <div class="type-tag" style="background-color: #A8A878;">Normal</div>
+            <div class="type-tag" style="background-color: #F08030;">Fuego</div>
+            <div class="type-tag" style="background-color: #6890F0;">Agua</div>
+            <div class="type-tag" style="background-color: #78C850;">Planta</div>
+            <div class="type-tag" style="background-color: #A8B820;">Bicho</div>
+            <div class="type-tag" style="background-color: #A040A0;">Veneno</div>
+            <div class="type-tag" style="background-color: #F8D030;">Eléctrico</div>
+            <div class="type-tag" style="background-color: #E0C068;">Tierra</div>
+            <div class="type-tag" style="background-color: #EE99AC;">Hada</div>
+            <div class="type-tag" style="background-color: #C03028;">Lucha</div>
+            <div class="type-tag" style="background-color: #F85888;">Psíquico</div>
+            <div class="type-tag" style="background-color: #B8A038;">Roca</div>
+            <div class="type-tag" style="background-color: #705898;">Fantasma</div>
+            <div class="type-tag" style="background-color: #98D8D8;">Hielo</div>
+            <div class="type-tag" style="background-color: #7038F8;">Dragón</div>
+            <div class="type-tag" style="background-color: #705848;">Siniestro</div>
+            <div class="type-tag" style="background-color: #B8B8D0;">Acero</div>
+            <div class="type-tag" style="background-color: #78C850;">Volador</div>
+        </div>
+        
+        <div class="features">
+            <div class="feature" onclick="showFeatureDemo(1)">
+                <div class="feature-icon"><i class="fas fa-search"></i></div>
+                <h3>Búsqueda Avanzada</h3>
+                <p>Encuentra cualquier Pokémon por nombre, tipo, número en la Pokédex nacional o incluso por generación. Filtra resultados según tus preferencias.</p>
+            </div>
+            
+            <div class="feature" onclick="showFeatureDemo(2)">
+                <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                <h3>Estadísticas Detalladas</h3>
+                <p>Accede a información completa sobre habilidades, estadísticas base, movimientos, evoluciones y ubicaciones de cada Pokémon en los juegos.</p>
+            </div>
+            
+            <div class="feature" onclick="showFeatureDemo(3)">
+                <div class="feature-icon"><i class="fas fa-cube"></i></div>
+                <h3>Modelos 3D</h3>
+                <p>Visualiza modelos interactivos de tus Pokémon favoritos con rotación 360°. Compara tamaños entre diferentes especies.</p>
+            </div>
+            
+            <div class="feature" onclick="showFeatureDemo(4)">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3>Comunidad</h3>
+                <p>Únete a nuestra comunidad de entrenadores, comparte tus equipos Pokémon y descubre combinaciones estratégicas.</p>
+            </div>
+            
+            <div class="feature" onclick="showFeatureDemo(5)">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Acceso Móvil</h3>
+                <p>Diseño completamente responsive que se adapta a cualquier dispositivo. Lleva tu Pokédex a todas partes.</p>
+            </div>
+            
+            <div class="feature" onclick="showFeatureDemo(6)">
+                <div class="feature-icon"><i class="fas fa-language"></i></div>
+                <h3>Multilenguaje</h3>
+                <p>Disponible en varios idiomas incluyendo español, inglés, japonés y más. Perfecto para entrenadores internacionales.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Sobre Nosotros</h3>
+                <p>Pokédex Interactiva es un proyecto creado por fans para fans, con el objetivo de proporcionar la mejor experiencia de consulta Pokémon.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li><a href="#" style="color: white; text-decoration: none;">Pokédex Completa</a></li>
+                    <li><a href="#" style="color: white; text-decoration: none;">Tipos Pokémon</a></li>
+                    <li><a href="#" style="color: white; text-decoration: none;">Guías de Juegos</a></li>
+                    <li><a href="#" style="color: white; text-decoration: none;">Calculadora de Daño</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Conéctate</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p style="margin-top: 15px;">Síguenos para actualizaciones y noticias Pokémon</p>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2023 Pokédex Interactiva - No afiliada a Nintendo, Game Freak o The Pokémon Company</p>
+            <p>Datos proporcionados por <a href="https://pokeapi.co/" style="color: var(--primary-yellow);">PokéAPI</a></p>
+        </div>
+    </footer>
+    
+    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon"></i>
+    </div>
+    
+    <script>
+        // Contador de Pokémon (simulado - luego lo reemplazaremos con la API)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulamos un contador que "carga"
+            let count = 0;
+            const target = 1025; // Número actual de Pokémon (hasta la Gen 9)
+            const counterElement = document.getElementById('pokemon-count');
+            const interval = setInterval(() => {
+                count += Math.floor(Math.random() * 50) + 10;
+                if (count >= target) {
+                    count = target;
+                    clearInterval(interval);
+                }
+                counterElement.textContent = count;
+            }, 100);
+            
+            // Efecto del botón de explorar
+            const exploreBtn = document.getElementById('explore-btn');
+            exploreBtn.addEventListener('mouseover', function() {
+                this.innerHTML = '<i class="fas fa-running"></i> ¡Vamos!';
+            });
+            
+            exploreBtn.addEventListener('mouseout', function() {
+                this.innerHTML = '<i class="fas fa-binoculars"></i> Explorar Pokémon';
+            });
+            
+            // Búsqueda demo
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
+            
+            searchInput.addEventListener('focus', function() {
+                searchResults.style.display = 'block';
+                searchResults.innerHTML = `
+                    <h3>Resultados de ejemplo</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                        <div style="background: #f0f0f0; padding: 10px; border-radius: 8px; text-align: center;">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" alt="Pikachu" width="80">
+                            <p>#025 Pikachu</p>
+                        </div>
+                        <div style="background: #f0f0f0; padding: 10px; border-radius: 8px; text-align: center;">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png" alt="Charizard" width="80">
+                            <p>#006 Charizard</p>
+                        </div>
+                        <div style="background: #f0f0f0; padding: 10px; border-radius: 8px; text-align: center;">
+                            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png" alt="Mewtwo" width="80">
+                            <p>#150 Mewtwo</p>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-style: italic;">En la versión completa, podrás buscar cualquier Pokémon existente</p>
+                `;
+            });
+            
+            searchInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    searchResults.style.display = 'none';
+                }, 200);
+            });
+        });
+        
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const toggleBtn = document.querySelector('.dark-mode-toggle i');
+            if (document.body.classList.contains('dark-mode')) {
+                toggleBtn.classList.remove('fa-moon');
+                toggleBtn.classList.add('fa-sun');
+            } else {
+                toggleBtn.classList.remove('fa-sun');
+                toggleBtn.classList.add('fa-moon');
+            }
+        }
+        
+        // Demo de características
+        function showFeatureDemo(featureNum) {
+            const featureNames = [
+                "", 
+                "Búsqueda Avanzada", 
+                "Estadísticas Detalladas", 
+                "Modelos 3D", 
+                "Comunidad", 
+                "Acceso Móvil", 
+                "Multilenguaje"
+            ];
+            
+            alert(`¡Pronto podrás experimentar la función de ${featureNames[featureNum]} en acción! Estamos trabajando en implementarla.`);
+        }
+        
+        // Efecto de tipo de Pokémon
+        document.querySelectorAll('.type-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                alert(`Filtrar Pokémon de tipo ${this.textContent}. Esta función estará disponible pronto.`);
+            });
+        });
+    </script>
+</body>
+</html>
